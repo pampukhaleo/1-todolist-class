@@ -1,26 +1,45 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import TodoList from "./TodoList";
 
-function App() {
-  const header1 = 'What to learn'
-  const header2 = 'What to read'
+export type FilterValuesType = 'All' | 'Completed' | 'Active'
 
-  const tasks1 = [
+function App() {
+  const header = 'What to learn'
+
+  const [tasks, setTasks] = useState([
     { id: 1, title: "HTML&CSS", isDone: true },
     { id: 2, title: "JS", isDone: true },
     { id: 3, title: "ReactJS", isDone: false }
-  ]
-  const tasks2 = [
-    { id: 1, title: "Hello world", isDone: true },
-    { id: 2, title: "I am Happy", isDone: false },
-    { id: 3, title: "Yo", isDone: false }
-  ]
+  ])
+
+  const [taskValue, setTaskValue] = useState('All')
+
+  let filteredTasks = tasks
+  if (taskValue === 'Completed') {
+    filteredTasks = tasks.filter(task => !task.isDone)
+  }
+  if (taskValue === 'Completed') {
+    filteredTasks = tasks.filter(task => task.isDone)
+  }
+
+  const statusHandler = (value: FilterValuesType) => {
+    setTaskValue(value)
+  }
+
+  const deleteHandler = (id: number) => {
+    let resultTasks = tasks.filter(task => task.id != id)
+    setTasks(resultTasks)
+  }
 
   return (
     <div className="App">
-      <TodoList header={header1} tasks={tasks1}/>
-      <TodoList header={header2} tasks={tasks2}/>
+      <TodoList
+        header={header}
+        tasks={filteredTasks}
+        deleteHandler={deleteHandler}
+        statusHandler={statusHandler}
+      />
     </div>
   );
 }
