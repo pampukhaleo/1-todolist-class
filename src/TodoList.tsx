@@ -4,10 +4,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {FilterValuesType} from "./App";
 
 type PropsType = {
-  header?: string
-  tasks?: Task[]
+  header: string
+  tasks: Task[]
   deleteHandler: (id: number) => void
   statusHandler: (value: FilterValuesType) => void
+  changeStatusHandler: (id: number) => void
+  onChangeInputHandler: (value: string) => void
+  inputValue: string
+  createTaskHandler: () => void
 }
 
 type Task = {
@@ -16,18 +20,28 @@ type Task = {
   isDone: boolean
 }
 
-const TodoList = ({header, tasks, deleteHandler, statusHandler}:PropsType) => {
+const TodoList = ({header,
+                    tasks,
+                    deleteHandler,
+                    statusHandler,
+                    changeStatusHandler,
+                    onChangeInputHandler,
+                    inputValue,
+                    createTaskHandler}:PropsType) => {
   return (
     <div>
       <h3>{header}</h3>
       <div>
-        <input/>
-        <button>+</button>
+        <input
+          onChange={(event) => onChangeInputHandler(event.target.value)}
+          value={inputValue}
+        />
+        <button onClick={createTaskHandler}>+</button>
       </div>
       <ul>
         {tasks?.map(task => (
           <li key={task.id}>
-            <input type="checkbox" checked={task.isDone}/> <span>{task.title}</span>
+            <input onChange={() => changeStatusHandler(task.id)} type="checkbox" checked={task.isDone}/> <span>{task.title}</span>
             <IconButton
               onClick={ () => deleteHandler(task.id) }
               aria-label="delete"
