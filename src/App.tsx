@@ -14,9 +14,10 @@ function App() {
   ])
 
   const [taskValue, setTaskValue] = useState('All')
+  const [inputValue, setInputValue] = useState('')
 
   let filteredTasks = tasks
-  if (taskValue === 'Completed') {
+  if (taskValue === 'Active') {
     filteredTasks = tasks.filter(task => !task.isDone)
   }
   if (taskValue === 'Completed') {
@@ -32,6 +33,34 @@ function App() {
     setTasks(resultTasks)
   }
 
+  const changeStatusHandler = (id: number) => {
+    const newStatus = tasks.map(task => {
+      if(id === task.id) {
+        return {
+          ...task,
+          isDone: !task.isDone
+        }
+      }
+      return task
+    })
+    // const newStatus = tasks.map(task => id === task.id ? {...task, isDone: !task.isDone  }: task)
+    // console.log(newStatus)
+    setTasks(newStatus)
+  }
+
+  const onChangeInputHandler = (value: string) => {
+    setInputValue(value)
+  }
+
+  const createTaskHandler = () => {
+    const newTask = {
+      id: Math.floor((Math.random() * 1000) + 1),
+      title: inputValue,
+      isDone: false
+    }
+    setTasks([...tasks, newTask])
+  }
+
   return (
     <div className="App">
       <TodoList
@@ -39,6 +68,10 @@ function App() {
         tasks={filteredTasks}
         deleteHandler={deleteHandler}
         statusHandler={statusHandler}
+        changeStatusHandler={changeStatusHandler}
+        onChangeInputHandler={onChangeInputHandler}
+        inputValue={inputValue}
+        createTaskHandler={createTaskHandler}
       />
     </div>
   );
