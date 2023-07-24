@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {IconButton} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import {FilterValuesType} from "./App";
+
+type FilterValuesType = 'All' | 'Completed' | 'Active'
 
 type PropsType = {
   header: string
   tasks: Task[]
   deleteHandler: (id: number) => void
-  statusHandler: (value: FilterValuesType) => void
   changeStatusHandler: (id: number) => void
   onChangeInputHandler: (value: string) => void
   inputValue: string
@@ -23,11 +23,32 @@ type Task = {
 const TodoList = ({header,
                     tasks,
                     deleteHandler,
-                    statusHandler,
                     changeStatusHandler,
                     onChangeInputHandler,
                     inputValue,
                     createTaskHandler}:PropsType) => {
+
+  const [taskValue, setTaskValue] = useState<FilterValuesType>('All')
+
+  const filterFoo = () => {
+    let filteredTasks = tasks
+    switch (taskValue) {
+      case 'Active': {
+        return filteredTasks = tasks.filter(task => !task.isDone)
+      }
+      break;
+      case 'Completed': {
+        return filteredTasks = tasks.filter(task => task.isDone)
+      }
+      break;
+      default: {
+        return filteredTasks
+      }
+    }
+  }
+
+  const statusHandler = (value: FilterValuesType) => setTaskValue(value)
+
   return (
     <div>
       <h3>{header}</h3>
@@ -39,7 +60,7 @@ const TodoList = ({header,
         <button onClick={createTaskHandler}>+</button>
       </div>
       <ul>
-        {tasks?.map(task => (
+        {filterFoo()?.map(task => (
           <li key={task.id}>
             <input onChange={() => changeStatusHandler(task.id)} type="checkbox" checked={task.isDone}/> <span>{task.title}</span>
             <IconButton

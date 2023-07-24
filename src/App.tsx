@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import './App.css';
 import TodoList from "./TodoList";
 
-export type FilterValuesType = 'All' | 'Completed' | 'Active'
-
 function App() {
   const header = 'What to learn'
 
@@ -13,25 +11,9 @@ function App() {
     { id: 3, title: "ReactJS", isDone: false }
   ])
 
-  const [taskValue, setTaskValue] = useState('All')
   const [inputValue, setInputValue] = useState('')
 
-  let filteredTasks = tasks
-  if (taskValue === 'Active') {
-    filteredTasks = tasks.filter(task => !task.isDone)
-  }
-  if (taskValue === 'Completed') {
-    filteredTasks = tasks.filter(task => task.isDone)
-  }
-
-  const statusHandler = (value: FilterValuesType) => {
-    setTaskValue(value)
-  }
-
-  const deleteHandler = (id: number) => {
-    let resultTasks = tasks.filter(task => task.id != id)
-    setTasks(resultTasks)
-  }
+  const deleteHandler = (id: number) => setTasks(tasks.filter(task => task.id != id))
 
   const changeStatusHandler = (id: number) => {
     const newStatus = tasks.map(task => {
@@ -65,9 +47,8 @@ function App() {
     <div className="App">
       <TodoList
         header={header}
-        tasks={filteredTasks}
+        tasks={tasks}
         deleteHandler={deleteHandler}
-        statusHandler={statusHandler}
         changeStatusHandler={changeStatusHandler}
         onChangeInputHandler={onChangeInputHandler}
         inputValue={inputValue}
