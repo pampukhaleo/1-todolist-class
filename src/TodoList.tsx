@@ -36,11 +36,9 @@ const TodoList = ({header,
       case 'Active': {
         return filteredTasks = tasks.filter(task => !task.isDone)
       }
-      break;
       case 'Completed': {
         return filteredTasks = tasks.filter(task => task.isDone)
       }
-      break;
       default: {
         return filteredTasks
       }
