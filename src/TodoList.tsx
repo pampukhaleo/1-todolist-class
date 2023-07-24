@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {IconButton} from "@mui/material";
+import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 type FilterValuesType = 'All' | 'Completed' | 'Active'
@@ -9,9 +9,7 @@ type PropsType = {
   tasks: Task[]
   deleteHandler: (id: number) => void
   changeStatusHandler: (id: number) => void
-  onChangeInputHandler: (value: string) => void
-  inputValue: string
-  createTaskHandler: () => void
+  createTaskHandler: (taskValue: string) => void
 }
 
 type Task = {
@@ -20,19 +18,20 @@ type Task = {
   isDone: boolean
 }
 
-const TodoList = ({header,
+const TodoList = ({
+                    header,
                     tasks,
-                    deleteHandler,
+                    createTaskHandler,
                     changeStatusHandler,
-                    onChangeInputHandler,
-                    inputValue,
-                    createTaskHandler}:PropsType) => {
+                    deleteHandler
+                  }: PropsType) => {
 
-  const [taskValue, setTaskValue] = useState<FilterValuesType>('All')
+  const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
+  const [inputValue, setInputValue] = useState('')
 
-  const filterFoo = () => {
+  const filterStatus = () => {
     let filteredTasks = tasks
-    switch (taskValue) {
+    switch (taskStatus) {
       case 'Active': {
         return filteredTasks = tasks.filter(task => !task.isDone)
       }
@@ -45,7 +44,11 @@ const TodoList = ({header,
     }
   }
 
-  const statusHandler = (value: FilterValuesType) => setTaskValue(value)
+  const statusHandler = (value: FilterValuesType) => setTaskStatus(value)
+
+  const onChangeInputHandler = (value: string) => {
+    setInputValue(value)
+  }
 
   return (
     <div>
@@ -55,26 +58,31 @@ const TodoList = ({header,
           onChange={(event) => onChangeInputHandler(event.target.value)}
           value={inputValue}
         />
-        <button onClick={createTaskHandler}>+</button>
+        <button onClick={() => {
+          createTaskHandler(inputValue)
+          setInputValue('')
+        }}>+
+        </button>
       </div>
       <ul>
-        {filterFoo()?.map(task => (
+        {filterStatus()?.map(task => (
           <li key={task.id}>
-            <input onChange={() => changeStatusHandler(task.id)} type="checkbox" checked={task.isDone}/> <span>{task.title}</span>
+            <input onChange={() => changeStatusHandler(task.id)} type="checkbox" checked={task.isDone}/>
+            <span>{task.title}</span>
             <IconButton
-              onClick={ () => deleteHandler(task.id) }
+              onClick={() => deleteHandler(task.id)}
               aria-label="delete"
               size="large"
             >
-              <DeleteIcon />
+              <DeleteIcon/>
             </IconButton>
           </li>
         ))}
       </ul>
       <div>
-        <button onClick={ () => statusHandler('All') }>All</button>
-        <button onClick={ () => statusHandler('Active') }>Active</button>
-        <button onClick={ () => statusHandler('Completed') }>Completed</button>
+        <button onClick={() => statusHandler('All')}>All</button>
+        <button onClick={() => statusHandler('Active')}>Active</button>
+        <button onClick={() => statusHandler('Completed')}>Completed</button>
       </div>
     </div>
   )
