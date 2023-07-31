@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Button } from './components/Button/Button';
 
 type FilterValuesType = 'All' | 'Completed' | 'Active'
 
 type PropsType = {
   header: string
   tasks: Task[]
-  deleteHandler: (id: number) => void
-  changeStatusHandler: (id: number) => void
-  createTaskHandler: (taskValue: string) => void
+  removeTask: (id: string) => void
+  changeStatus: (id: string) => void
+  createTask: (taskValue: string) => void
 }
 
-type Task = {
-  id: number
+export type Task = {
+  id: string
   title: string
   isDone: boolean
 }
@@ -21,9 +22,9 @@ type Task = {
 const TodoList = ({
                     header,
                     tasks,
-                    createTaskHandler,
-                    changeStatusHandler,
-                    deleteHandler
+                    createTask,
+                    changeStatus,
+                    removeTask
                   }: PropsType) => {
 
   const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
@@ -46,43 +47,59 @@ const TodoList = ({
 
   const statusHandler = (value: FilterValuesType) => setTaskStatus(value)
 
-  const onChangeInputHandler = (value: string) => {
-    setInputValue(value)
+  const onChangeInputHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.currentTarget.value)
+  }
+
+  // const deleteHandler = (id: string) => {
+  //   removeTask(id)
+  // }
+
+  const inputValueHandler = () => {
+    createTask(inputValue)
+    setInputValue('')
+  }
+
+  const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      inputValueHandler()
+    }
+  }
+
+  const addTaskHandler = () => {
+    inputValueHandler()
   }
 
   return (
     <div>
-      <h3>{header}</h3>
+      <h3>{ header }</h3>
       <div>
         <input
-          onChange={(event) => onChangeInputHandler(event.target.value)}
-          value={inputValue}
+          onChange={ onChangeInputHandler }
+          onKeyDown={ onKeyDownHandler }
+          value={ inputValue }
         />
-        <button onClick={() => {
-          createTaskHandler(inputValue)
-          setInputValue('')
-        }}>+
-        </button>
+        <Button name={ '+' } callBack={ addTaskHandler }/>
       </div>
       <ul>
-        {filterStatus()?.map(task => (
-          <li key={task.id}>
-            <input onChange={() => changeStatusHandler(task.id)} type="checkbox" checked={task.isDone}/>
-            <span>{task.title}</span>
+        { filterStatus()?.map(task => (
+          <li key={ task.id }>
+            <input onChange={ () => changeStatus(task.id) } type="checkbox" checked={ task.isDone }/>
+            <span>{ task.title }</span>
             <IconButton
-              onClick={() => deleteHandler(task.id)}
+              onClick={ () => removeTask(task.id) }
               aria-label="delete"
               size="large"
             >
               <DeleteIcon/>
             </IconButton>
           </li>
-        ))}
+        )) }
       </ul>
       <div>
-        <button onClick={() => statusHandler('All')}>All</button>
-        <button onClick={() => statusHandler('Active')}>Active</button>
-        <button onClick={() => statusHandler('Completed')}>Completed</button>
+        <Button callBack={ () => statusHandler('All') } name={ 'All' }/>
+        <Button callBack={ () => statusHandler('Active') } name={ 'Active' }/>
+        <Button callBack={ () => statusHandler('Completed') } name={ 'Completed' }/>
       </div>
     </div>
   )

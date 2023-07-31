@@ -1,30 +1,31 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import { v1 } from 'uuid';
 import './App.css';
-import TodoList from "./TodoList";
+import TodoList, { Task } from './TodoList';
 
 function App() {
   const header = 'What to learn'
 
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "HTML&CSS", isDone: true },
-    { id: 2, title: "JS", isDone: true },
-    { id: 3, title: "ReactJS", isDone: false }
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: v1(), title: 'HTML&CSS', isDone: true },
+    { id: v1(), title: 'JS', isDone: true },
+    { id: v1(), title: 'ReactJS', isDone: false }
   ])
 
-  const deleteHandler = (id: number) => setTasks(tasks.filter(task => task.id != id))
+  const removeTask = (id: string) => setTasks(tasks.filter(task => task.id != id))
 
-  const createTaskHandler = (inputValue: string) => {
+  const createTask = (inputValue: string) => {
     const newTask = {
-      id: Math.floor((Math.random() * 1000) + 1),
+      id: v1(),
       title: inputValue,
       isDone: false
     }
     setTasks([...tasks, newTask])
   }
 
-  const changeStatusHandler = (id: number) => {
+  const changeStatus = (id: string) => {
     const newStatus = tasks.map(task => {
-      if(id === task.id) {
+      if (id === task.id) {
         return {
           ...task,
           isDone: !task.isDone
@@ -40,11 +41,11 @@ function App() {
   return (
     <div className="App">
       <TodoList
-        header={header}
-        tasks={tasks}
-        deleteHandler={deleteHandler}
-        changeStatusHandler={changeStatusHandler}
-        createTaskHandler={createTaskHandler}
+        header={ header }
+        tasks={ tasks }
+        removeTask={ removeTask }
+        changeStatus={ changeStatus }
+        createTask={ createTask }
       />
     </div>
   );
