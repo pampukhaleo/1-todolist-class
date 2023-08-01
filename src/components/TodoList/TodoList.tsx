@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
+import React, { ChangeEvent, ChangeEventHandler, KeyboardEvent, MouseEvent, useState } from 'react'
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from '../Button/Button';
@@ -11,7 +11,7 @@ type PropsType = {
   header: string
   tasks: Task[]
   removeTask: (id: string) => void
-  changeStatus: (id: string) => void
+  changeStatus: (id: string, isDone: boolean) => void
   createTask: (taskValue: string) => void
   editTask: (title: string) => void
   disabled: boolean
@@ -89,8 +89,9 @@ const TodoList = ({
     editTask(title)
   }
 
-  const onChangeHandler = (id: string) => {
-    changeStatus(id)
+  const onChangeHandler = (event: ChangeEvent<HTMLInputElement>, id: string) => {
+    const isDone = event.currentTarget.checked
+    changeStatus(id, isDone)
   }
 
   return (
@@ -110,7 +111,7 @@ const TodoList = ({
         { filterStatus()?.map(task => (
           <li key={ task.id }
               className={ task.isDone ? 'grey-text' : '' }>
-            <input onChange={ () => onChangeHandler(task.id) } type="checkbox" checked={ task.isDone }/>
+            <input onChange={ (e) => onChangeHandler(e, task.id) } type="checkbox" checked={ task.isDone }/>
             <span>{ task.title }</span>
             <IconButton
               onClick={ () => deleteHandler(task.id) }

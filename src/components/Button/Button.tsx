@@ -1,15 +1,15 @@
-import React from 'react'
+import React, { MouseEvent } from 'react'
 
 type PropsType = {
   name: string
-  callBack: () => void
+  callBack: (event: MouseEvent<HTMLElement>) => void
   status?: boolean
 }
 
 export const Button = ({ name, callBack, status }: PropsType) => {
 
-  const onclickHandler = () => {
-    callBack()
+  const onclickHandler = (event: MouseEvent<HTMLElement>) => {
+    callBack(event)
   }
 
   return (
