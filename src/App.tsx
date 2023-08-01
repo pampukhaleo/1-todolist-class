@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { v1 } from 'uuid';
 import './App.css';
 import TodoList, { Task } from './components/TodoList/TodoList';
-import { EditComponent } from './components/EditComponent/EditComponent';
 
 function App() {
   const header = 'What to learn'
@@ -13,7 +12,8 @@ function App() {
     { id: v1(), title: 'ReactJS', isDone: false }
   ])
 
-  const [disabled, setDisables] = useState<boolean>(false)
+  const [disabled, setDisabled] = useState<boolean>(true)
+  const [editId, setEditId] = useState('');
 
   const removeTask = (id: string) => setTasks(tasks.filter(task => task.id != id))
 
@@ -41,8 +41,19 @@ function App() {
     setTasks(newStatus)
   }
 
-  const changeDisableStatus = () => {
-    setDisables(!disabled)
+  const disableHandler = (id: string) => {
+    setDisabled(false)
+    setEditId(id)
+  }
+
+  const editTask = (title: string) => {
+
+    const editedTask = tasks.find(task => task.id === editId)
+    if (editedTask) {
+      editedTask.title = title
+    }
+    setTasks([...tasks])
+    setDisabled(true)
   }
 
   return (
@@ -53,10 +64,10 @@ function App() {
         removeTask={ removeTask }
         changeStatus={ changeStatus }
         createTask={ createTask }
-        changeDisableStatus={ changeDisableStatus }
+        editTask={ editTask }
+        disableHandler={ disableHandler }
         disabled={ disabled }
       />
-      {/*<EditComponent/>*/}
     </div>
   );
 }

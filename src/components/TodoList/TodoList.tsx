@@ -3,6 +3,7 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from '../Button/Button';
 import ButtonMUI from '@mui/material/Button';
+import { EditComponent } from '../EditComponent/EditComponent';
 
 type FilterValuesType = 'All' | 'Completed' | 'Active'
 
@@ -12,8 +13,9 @@ type PropsType = {
   removeTask: (id: string) => void
   changeStatus: (id: string) => void
   createTask: (taskValue: string) => void
-  changeDisableStatus: () => void
+  editTask: (title: string) => void
   disabled: boolean
+  disableHandler: (id: string) => void
 }
 
 export type Task = {
@@ -28,8 +30,9 @@ const TodoList = ({
                     createTask,
                     changeStatus,
                     removeTask,
-                    changeDisableStatus,
-                    disabled
+                    editTask,
+                    disabled,
+                    disableHandler
                   }: PropsType) => {
 
   const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
@@ -82,8 +85,8 @@ const TodoList = ({
     addTaskHandler()
   }
 
-  const disabledHandler = () => {
-    changeDisableStatus()
+  const onClickEditHandler = (title: string) => {
+    editTask(title)
   }
 
   const onChangeHandler = (id: string) => {
@@ -116,7 +119,7 @@ const TodoList = ({
             >
               <DeleteIcon/>
             </IconButton>
-            {/*<ButtonMUI onClick={disabledHandler} disabled={disabled}>Primary</ButtonMUI>*/ }
+            <ButtonMUI onClick={ () => disableHandler(task.id) }>Edit Task</ButtonMUI>
           </li>
         )) }
       </ul>
@@ -131,6 +134,7 @@ const TodoList = ({
                 callBack={ () => statusHandler('Completed') }
                 name={ 'Completed' }/>
       </div>
+      { !disabled && <EditComponent onClickEditHandler={ onClickEditHandler }/> }
     </div>
   )
 }
