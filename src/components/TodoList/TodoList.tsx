@@ -34,7 +34,7 @@ const TodoList = ({
 
   const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
   const [inputValue, setInputValue] = useState('')
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const filterStatus = () => {
     let filteredTasks = tasks
@@ -63,6 +63,8 @@ const TodoList = ({
 
   const addTaskHandler = () => {
     if (inputValue.trim() === '') {
+      setError('Field is required')
+      setInputValue('')
       return
     }
     createTask(inputValue.trim())
@@ -70,6 +72,7 @@ const TodoList = ({
   }
 
   const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+    setError(null)
     if (event.key === 'Enter') {
       addTaskHandler()
     }
@@ -95,8 +98,10 @@ const TodoList = ({
           onChange={ onChangeInputHandler }
           onKeyDown={ onKeyDownHandler }
           value={ inputValue }
+          className={error ? 'error' : '' }
         />
         <Button name={ '+' } callBack={ inputValueHandler }/>
+        {error && <div className="error-message">{error}</div> }
       </div>
       <ul>
         { filterStatus()?.map(task => (
