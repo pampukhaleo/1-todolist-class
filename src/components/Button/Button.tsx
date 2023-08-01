@@ -3,16 +3,18 @@ import React from 'react'
 type PropsType = {
   name: string
   callBack: () => void
+  status?: boolean
 }
 
-export const Button = ({ name, callBack }: PropsType) => {
+export const Button = ({ name, callBack, status }: PropsType) => {
 
   const onclickHandler = () => {
     callBack()
   }
 
   return (
-    <button onClick={ onclickHandler }>
+    <button className={ status === true ? 'active-button' : '' }
+            onClick={ onclickHandler }>
       { name }
     </button>
   )

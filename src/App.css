@@ -19,3 +19,13 @@
 .error-message {
   color: red;
 }
+
+.active-button {
+  background-color: lightgreen;
+  color: green;
+  border: 1px solid darkgreen;
+}
+
+.grey-text {
+  color: grey;
+}

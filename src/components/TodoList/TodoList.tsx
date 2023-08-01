@@ -98,14 +98,15 @@ const TodoList = ({
           onChange={ onChangeInputHandler }
           onKeyDown={ onKeyDownHandler }
           value={ inputValue }
-          className={error ? 'error' : '' }
+          className={ error ? 'error' : '' }
         />
         <Button name={ '+' } callBack={ inputValueHandler }/>
-        {error && <div className="error-message">{error}</div> }
+        { error && <div className="error-message">{ error }</div> }
       </div>
       <ul>
         { filterStatus()?.map(task => (
-          <li key={ task.id }>
+          <li key={ task.id }
+              className={ task.isDone ? 'grey-text' : '' }>
             <input onChange={ () => onChangeHandler(task.id) } type="checkbox" checked={ task.isDone }/>
             <span>{ task.title }</span>
             <IconButton
@@ -115,14 +116,20 @@ const TodoList = ({
             >
               <DeleteIcon/>
             </IconButton>
-            {/*<ButtonMUI onClick={disabledHandler} disabled={disabled}>Primary</ButtonMUI>*/}
+            {/*<ButtonMUI onClick={disabledHandler} disabled={disabled}>Primary</ButtonMUI>*/ }
           </li>
         )) }
       </ul>
       <div>
-        <Button callBack={ () => statusHandler('All') } name={ 'All' }/>
-        <Button callBack={ () => statusHandler('Active') } name={ 'Active' }/>
-        <Button callBack={ () => statusHandler('Completed') } name={ 'Completed' }/>
+        <Button status={ taskStatus === 'All' }
+                callBack={ () => statusHandler('All') }
+                name={ 'All' }/>
+        <Button status={ taskStatus === 'Active' }
+                callBack={ () => statusHandler('Active') }
+                name={ 'Active' }/>
+        <Button status={ taskStatus === 'Completed' }
+                callBack={ () => statusHandler('Completed') }
+                name={ 'Completed' }/>
       </div>
     </div>
   )
