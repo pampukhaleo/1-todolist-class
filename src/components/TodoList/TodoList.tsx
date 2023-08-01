@@ -1,7 +1,8 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from './components/Button/Button';
+import { Button } from '../Button/Button';
+import ButtonMUI from '@mui/material/Button';
 
 type FilterValuesType = 'All' | 'Completed' | 'Active'
 
@@ -11,6 +12,8 @@ type PropsType = {
   removeTask: (id: string) => void
   changeStatus: (id: string) => void
   createTask: (taskValue: string) => void
+  changeDisableStatus: () => void
+  disabled: boolean
 }
 
 export type Task = {
@@ -24,11 +27,14 @@ const TodoList = ({
                     tasks,
                     createTask,
                     changeStatus,
-                    removeTask
+                    removeTask,
+                    changeDisableStatus,
+                    disabled
                   }: PropsType) => {
 
   const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
   const [inputValue, setInputValue] = useState('')
+  const [error, setError] = useState(null);
 
   const filterStatus = () => {
     let filteredTasks = tasks
@@ -51,23 +57,34 @@ const TodoList = ({
     setInputValue(event.currentTarget.value)
   }
 
-  // const deleteHandler = (id: string) => {
-  //   removeTask(id)
-  // }
+  const deleteHandler = (id: string) => {
+    removeTask(id)
+  }
 
-  const inputValueHandler = () => {
-    createTask(inputValue)
+  const addTaskHandler = () => {
+    if (inputValue.trim() === '') {
+      return
+    }
+    createTask(inputValue.trim())
     setInputValue('')
   }
 
   const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      inputValueHandler()
+      addTaskHandler()
     }
   }
 
-  const addTaskHandler = () => {
-    inputValueHandler()
+  const inputValueHandler = () => {
+    addTaskHandler()
+  }
+
+  const disabledHandler = () => {
+    changeDisableStatus()
+  }
+
+  const onChangeHandler = (id: string) => {
+    changeStatus(id)
   }
 
   return (
@@ -79,20 +96,21 @@ const TodoList = ({
           onKeyDown={ onKeyDownHandler }
           value={ inputValue }
         />
-        <Button name={ '+' } callBack={ addTaskHandler }/>
+        <Button name={ '+' } callBack={ inputValueHandler }/>
       </div>
       <ul>
         { filterStatus()?.map(task => (
           <li key={ task.id }>
-            <input onChange={ () => changeStatus(task.id) } type="checkbox" checked={ task.isDone }/>
+            <input onChange={ () => onChangeHandler(task.id) } type="checkbox" checked={ task.isDone }/>
             <span>{ task.title }</span>
             <IconButton
-              onClick={ () => removeTask(task.id) }
+              onClick={ () => deleteHandler(task.id) }
               aria-label="delete"
               size="large"
             >
               <DeleteIcon/>
             </IconButton>
+            {/*<ButtonMUI onClick={disabledHandler} disabled={disabled}>Primary</ButtonMUI>*/}
           </li>
         )) }
       </ul>

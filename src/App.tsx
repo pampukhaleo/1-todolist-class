@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { v1 } from 'uuid';
 import './App.css';
-import TodoList, { Task } from './TodoList';
+import TodoList, { Task } from './components/TodoList/TodoList';
+import { EditComponent } from './components/EditComponent/EditComponent';
 
 function App() {
   const header = 'What to learn'
@@ -11,6 +12,8 @@ function App() {
     { id: v1(), title: 'JS', isDone: true },
     { id: v1(), title: 'ReactJS', isDone: false }
   ])
+
+  const [disabled, setDisables] = useState<boolean>(false)
 
   const removeTask = (id: string) => setTasks(tasks.filter(task => task.id != id))
 
@@ -38,6 +41,10 @@ function App() {
     setTasks(newStatus)
   }
 
+  const changeDisableStatus = () => {
+    setDisables(!disabled)
+  }
+
   return (
     <div className="App">
       <TodoList
@@ -46,7 +53,10 @@ function App() {
         removeTask={ removeTask }
         changeStatus={ changeStatus }
         createTask={ createTask }
+        changeDisableStatus={ changeDisableStatus }
+        disabled={ disabled }
       />
+      {/*<EditComponent/>*/}
     </div>
   );
 }
