@@ -16,6 +16,8 @@ type PropsType = {
   editTask: (title: string) => void
   disabled: boolean
   disableHandler: (id: string) => void
+  editValue: string
+  disablingInput: () => void
 }
 
 export type Task = {
@@ -32,7 +34,9 @@ const TodoList = ({
                     removeTask,
                     editTask,
                     disabled,
-                    disableHandler
+                    disableHandler,
+                    editValue,
+                    disablingInput
                   }: PropsType) => {
 
   const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
@@ -135,7 +139,7 @@ const TodoList = ({
                 callBack={ () => statusHandler('Completed') }
                 name={ 'Completed' }/>
       </div>
-      { !disabled && <EditComponent onClickEditHandler={ onClickEditHandler }/> }
+      { !disabled && <EditComponent disablingInput={disablingInput} onClickEditHandler={ onClickEditHandler } editValue={editValue}/> }
     </div>
   )
 }

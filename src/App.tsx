@@ -14,6 +14,7 @@ function App() {
 
   const [disabled, setDisabled] = useState<boolean>(true)
   const [editId, setEditId] = useState('');
+  const [editValue, setEditValue] = useState('');
 
   const removeTask = (id: string) => setTasks(tasks.filter(task => task.id != id))
 
@@ -42,17 +43,34 @@ function App() {
   }
 
   const disableHandler = (id: string) => {
-    setDisabled(false)
+    disablingInput()
     setEditId(id)
+    inputEditInitialValue(id);
+  }
+
+  const disablingInput = () => {
+    setDisabled(!disabled)
+  }
+
+  const inputEditInitialValue = (id: string) => {
+    const filteredTask = tasks.filter(task => {
+      return task.id === id
+    })
+    setEditValue(filteredTask[0].title)
   }
 
   const editTask = (title: string) => {
 
-    const editedTask = tasks.find(task => task.id === editId)
-    if (editedTask) {
-      editedTask.title = title
-    }
-    setTasks([...tasks])
+    const editedTasks = tasks.map(task => {
+      if (task.id === editId) {
+        return {
+          ...task,
+          title: title
+        }
+      }
+      return task
+    })
+    setTasks(editedTasks)
     setDisabled(true)
   }
 
@@ -67,6 +85,8 @@ function App() {
         editTask={ editTask }
         disableHandler={ disableHandler }
         disabled={ disabled }
+        editValue={ editValue }
+        disablingInput={ disablingInput }
       />
     </div>
   );
