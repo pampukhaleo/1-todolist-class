@@ -1,29 +1,25 @@
-import React, { ChangeEvent, ChangeEventHandler, KeyboardEvent, MouseEvent, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from '../Button/Button';
 import ButtonMUI from '@mui/material/Button';
 import { EditComponent } from '../EditComponent/EditComponent';
-
-type FilterValuesType = 'All' | 'Completed' | 'Active'
+import { FilterValuesType, Task } from '../../App';
 
 type PropsType = {
   header: string
   tasks: Task[]
-  removeTask: (id: string) => void
-  changeStatus: (id: string, isDone: boolean) => void
-  createTask: (taskValue: string) => void
-  editTask: (title: string) => void
+  removeTask: (id: string, todoListId: string) => void
+  changeStatus: (id: string, isDone: boolean, todoListId: string) => void
+  createTask: (taskValue: string, todoListId: string) => void
+  editTask: (title: string, todoListId: string) => void
   disabled: boolean
-  disableHandler: (id: string) => void
+  disableHandler: (id: string, todoListId: string) => void
   editValue: string
-  disablingInput: () => void
-}
-
-export type Task = {
-  id: string
-  title: string
-  isDone: boolean
+  disablingInput: (todoListId: string) => void
+  changeCheckedStatus: (value: FilterValuesType) => void
+  taskStatus: string
+  todoListId: string
 }
 
 const TodoList = ({
@@ -36,36 +32,23 @@ const TodoList = ({
                     disabled,
                     disableHandler,
                     editValue,
-                    disablingInput
+                    disablingInput,
+                    changeCheckedStatus,
+                    taskStatus,
+                    todoListId
                   }: PropsType) => {
 
-  const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState<string | null>(null);
 
-  const filterStatus = () => {
-    let filteredTasks = tasks
-    switch (taskStatus) {
-      case 'Active': {
-        return filteredTasks = tasks.filter(task => !task.isDone)
-      }
-      case 'Completed': {
-        return filteredTasks = tasks.filter(task => task.isDone)
-      }
-      default: {
-        return filteredTasks
-      }
-    }
-  }
-
-  const statusHandler = (value: FilterValuesType) => setTaskStatus(value)
+  const statusHandler = (value: FilterValuesType) => changeCheckedStatus(value)
 
   const onChangeInputHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.currentTarget.value)
   }
 
   const deleteHandler = (id: string) => {
-    removeTask(id)
+    removeTask(id, todoListId)
   }
 
   const addTaskHandler = () => {
@@ -74,7 +57,7 @@ const TodoList = ({
       setInputValue('')
       return
     }
-    createTask(inputValue.trim())
+    createTask(inputValue.trim(), todoListId)
     setInputValue('')
   }
 
@@ -90,12 +73,12 @@ const TodoList = ({
   }
 
   const onClickEditHandler = (title: string) => {
-    editTask(title)
+    editTask(title, todoListId)
   }
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>, id: string) => {
     const isDone = event.currentTarget.checked
-    changeStatus(id, isDone)
+    changeStatus(id, isDone, todoListId)
   }
 
   return (
@@ -112,7 +95,7 @@ const TodoList = ({
         { error && <div className="error-message">{ error }</div> }
       </div>
       <ul>
-        { filterStatus()?.map(task => (
+        { tasks.map(task => (
           <li key={ task.id }
               className={ task.isDone ? 'grey-text' : '' }>
             <input onChange={ (e) => onChangeHandler(e, task.id) } type="checkbox" checked={ task.isDone }/>
@@ -124,7 +107,7 @@ const TodoList = ({
             >
               <DeleteIcon/>
             </IconButton>
-            <ButtonMUI onClick={ () => disableHandler(task.id) }>Edit Task</ButtonMUI>
+            <ButtonMUI onClick={ () => disableHandler(task.id, todoListId) }>Edit Task</ButtonMUI>
           </li>
         )) }
       </ul>
@@ -139,7 +122,9 @@ const TodoList = ({
                 callBack={ () => statusHandler('Completed') }
                 name={ 'Completed' }/>
       </div>
-      { !disabled && <EditComponent disablingInput={disablingInput} onClickEditHandler={ onClickEditHandler } editValue={editValue}/> }
+      { !disabled && <EditComponent disablingInput={ () => disablingInput(todoListId) }
+                                    onClickEditHandler={ onClickEditHandler }
+                                    editValue={ editValue }/> }
     </div>
   )
 }
