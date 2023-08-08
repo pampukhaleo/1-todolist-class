@@ -8,7 +8,7 @@ import { FilterValuesType, Task } from '../../App';
 
 type PropsType = {
   header: string
-  tasks: Task[]
+  tasks: () => Task[]
   removeTask: (id: string, todoListId: string) => void
   changeStatus: (id: string, isDone: boolean, todoListId: string) => void
   createTask: (taskValue: string, todoListId: string) => void
@@ -17,9 +17,9 @@ type PropsType = {
   disableHandler: (id: string, todoListId: string) => void
   editValue: string
   disablingInput: (todoListId: string) => void
-  changeCheckedStatus: (value: FilterValuesType) => void
-  taskStatus: string
+  changeFilter: (value: FilterValuesType, todoListId: string) => void
   todoListId: string
+  taskFilterStatus: string
 }
 
 const TodoList = ({
@@ -33,15 +33,15 @@ const TodoList = ({
                     disableHandler,
                     editValue,
                     disablingInput,
-                    changeCheckedStatus,
-                    taskStatus,
-                    todoListId
+                    changeFilter,
+                    todoListId,
+                    taskFilterStatus
                   }: PropsType) => {
 
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState<string | null>(null);
 
-  const statusHandler = (value: FilterValuesType) => changeCheckedStatus(value)
+  const filterHandler = (value: FilterValuesType) => changeFilter(value, todoListId)
 
   const onChangeInputHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.currentTarget.value)
@@ -95,7 +95,7 @@ const TodoList = ({
         { error && <div className="error-message">{ error }</div> }
       </div>
       <ul>
-        { tasks.map(task => (
+        { tasks().map(task => (
           <li key={ task.id }
               className={ task.isDone ? 'grey-text' : '' }>
             <input onChange={ (e) => onChangeHandler(e, task.id) } type="checkbox" checked={ task.isDone }/>
@@ -112,14 +112,14 @@ const TodoList = ({
         )) }
       </ul>
       <div>
-        <Button status={ taskStatus === 'All' }
-                callBack={ () => statusHandler('All') }
+        <Button status={ taskFilterStatus === 'All' }
+                callBack={ () => filterHandler('All') }
                 name={ 'All' }/>
-        <Button status={ taskStatus === 'Active' }
-                callBack={ () => statusHandler('Active') }
+        <Button status={ taskFilterStatus === 'Active' }
+                callBack={ () => filterHandler('Active') }
                 name={ 'Active' }/>
-        <Button status={ taskStatus === 'Completed' }
-                callBack={ () => statusHandler('Completed') }
+        <Button status={ taskFilterStatus === 'Completed' }
+                callBack={ () => filterHandler('Completed') }
                 name={ 'Completed' }/>
       </div>
       { !disabled && <EditComponent disablingInput={ () => disablingInput(todoListId) }

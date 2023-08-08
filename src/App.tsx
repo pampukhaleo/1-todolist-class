@@ -43,9 +43,6 @@ function App() {
     ],
   });
 
-  const [taskStatus, setTaskStatus] = useState<FilterValuesType>('All')
-
-  // const [disabled, setDisabled] = useState<boolean>(true)
   const [editId, setEditId] = useState('');
   const [editValue, setEditValue] = useState('');
 
@@ -138,42 +135,44 @@ function App() {
     setTodoLists(newTodoList)
   }
 
-  const changeCheckedStatus = (value: FilterValuesType) => {
-    setTaskStatus(value)
+  const changeFilter = (value: FilterValuesType, todoListId: string) => {
+    const newTodoLists = todoLists.map(tl => {
+      if (tl.id === todoListId) {
+        return {
+          ...tl,
+          filter: value
+        }
+      }
+      return tl
+    })
+    setTodoLists(newTodoLists)
   }
 
   return (
     <div className="App">
       {
         todoLists.map(tl => {
-          // const filterStatus = () => {
-          //   let filteredTasks = tasksObj[tl.id]
-          //   switch (tl.filter) {
-          //     case 'Active': {
-          //       return filteredTasks = filteredTasks.filter(task => !task.isDone)
-          //     }
-          //     case 'Completed': {
-          //       return filteredTasks = filteredTasks.filter(task => task.isDone)
-          //     }
-          //     default: {
-          //       return filteredTasks
-          //     }
-          //   }
-          // }
-
-          let filteredTasks = tasksObj[tl.id]
-          if (tl.filter === 'Active') {
-            filteredTasks = filteredTasks.filter(task => task.isDone)
-          }
-          if (tl.filter === 'Completed') {
-            filteredTasks = filteredTasks.filter(task => !task.isDone)
+          const filterStatus = () => {
+            let filteredTasks = tasksObj[tl.id]
+            switch (tl.filter) {
+              case 'Active': {
+                return filteredTasks = filteredTasks.filter(task => !task.isDone)
+              }
+              case 'Completed': {
+                return filteredTasks = filteredTasks.filter(task => task.isDone)
+              }
+              default: {
+                return filteredTasks
+              }
+            }
           }
 
           return <TodoList
             key={ tl.id }
             todoListId={ tl.id }
             header={ tl.name }
-            tasks={ filteredTasks }
+            taskFilterStatus = {tl.filter}
+            tasks={ filterStatus }
             removeTask={ removeTask }
             changeStatus={ changeStatus }
             createTask={ createTask }
@@ -182,8 +181,7 @@ function App() {
             disabled={ tl.disabled }
             editValue={ editValue }
             disablingInput={ disablingInput }
-            changeCheckedStatus={ changeCheckedStatus }
-            taskStatus={ taskStatus }
+            changeFilter={ changeFilter }
           />
         })
       }
