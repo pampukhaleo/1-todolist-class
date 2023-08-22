@@ -15,11 +15,12 @@ type PropsType = {
   editTask: (title: string, todoListId: string) => void
   disabled: boolean
   disableHandler: (id: string, todoListId: string) => void
-  editValue: string
+  editInputValue: string
   disablingInput: (todoListId: string) => void
   changeFilter: (value: FilterValuesType, todoListId: string) => void
   todoListId: string
   taskFilterStatus: string
+  deleteTodoList: (todoListId: string) => void
 }
 
 const TodoList = ({
@@ -31,11 +32,12 @@ const TodoList = ({
                     editTask,
                     disabled,
                     disableHandler,
-                    editValue,
+                    editInputValue,
                     disablingInput,
                     changeFilter,
                     todoListId,
-                    taskFilterStatus
+                    taskFilterStatus,
+                    deleteTodoList
                   }: PropsType) => {
 
   const [inputValue, setInputValue] = useState('')
@@ -81,9 +83,14 @@ const TodoList = ({
     changeStatus(id, isDone, todoListId)
   }
 
+  const onDeleteTodoListHandler = () => {
+    deleteTodoList(todoListId)
+  }
+
   return (
     <div>
       <h3>{ header }</h3>
+      <button onClick={onDeleteTodoListHandler}>X</button>
       <div>
         <input
           onChange={ onChangeInputHandler }
@@ -124,7 +131,7 @@ const TodoList = ({
       </div>
       { !disabled && <EditComponent disablingInput={ () => disablingInput(todoListId) }
                                     onClickEditHandler={ onClickEditHandler }
-                                    editValue={ editValue }/> }
+                                    editValue={ editInputValue }/> }
     </div>
   )
 }

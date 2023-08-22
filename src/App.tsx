@@ -18,6 +18,10 @@ type TodoListType = {
   disabled: boolean
 }
 
+type TasksType = {
+  [key: string]: Task[]
+}
+
 function App() {
 
   const todoListId1 = v1()
@@ -28,7 +32,7 @@ function App() {
     { id: todoListId2, name: 'What to buy', filter: 'Completed', disabled: true },
   ]);
 
-  const [tasksObj, setTasksObj] = useState({
+  const [tasksObj, setTasksObj] = useState<TasksType>({
     [todoListId1]: [
       { id: v1(), title: 'HTML&CSS', isDone: true },
       { id: v1(), title: 'JS', isDone: true },
@@ -44,7 +48,7 @@ function App() {
   });
 
   const [editId, setEditId] = useState('');
-  const [editValue, setEditValue] = useState('');
+  const [editInputValue, setEditInputValue] = useState('');
 
   const removeTask = (id: string, todoListId: string) => {
     const tasks = tasksObj[todoListId]
@@ -106,7 +110,7 @@ function App() {
     const filteredTask = tasks.filter(task => {
       return task.id === id
     })
-    setEditValue(filteredTask[0].title)
+    setEditInputValue(filteredTask[0].title)
   }
 
   const editTask = (title: string, todoListId: string) => {
@@ -148,8 +152,30 @@ function App() {
     setTodoLists(newTodoLists)
   }
 
+  const deleteTodoList = (todoListId: string) => {
+    const newTodoListArr = todoLists.filter(todoList => todoList.id !== todoListId)
+    delete tasksObj[todoListId]
+    setTodoLists(newTodoListArr);
+  }
+
+  const addTodoList = () => {
+    const newId = v1()
+    const newTodoList: TodoListType = {
+      id: newId,
+      name: 'New TodoList',
+      filter: 'All',
+      disabled: true
+    }
+    const newTask: TasksType = {
+      [newId]: [{ id: v1(), title: 'New Task', isDone: false }]
+    }
+    setTodoLists([...todoLists, newTodoList])
+    setTasksObj({...tasksObj, ...newTask})
+  }
+
   return (
     <div className="App">
+      <button onClick={addTodoList}>create</button>
       {
         todoLists.map(tl => {
           const filterStatus = () => {
@@ -171,17 +197,18 @@ function App() {
             key={ tl.id }
             todoListId={ tl.id }
             header={ tl.name }
-            taskFilterStatus = {tl.filter}
+            taskFilterStatus={ tl.filter }
+            disabled={ tl.disabled }
+            editInputValue={ editInputValue }
             tasks={ filterStatus }
             removeTask={ removeTask }
-            changeStatus={ changeStatus }
             createTask={ createTask }
             editTask={ editTask }
-            disableHandler={ disableHandler }
-            disabled={ tl.disabled }
-            editValue={ editValue }
-            disablingInput={ disablingInput }
+            changeStatus={ changeStatus }
             changeFilter={ changeFilter }
+            disableHandler={ disableHandler }
+            disablingInput={ disablingInput }
+            deleteTodoList={ deleteTodoList }
           />
         })
       }
