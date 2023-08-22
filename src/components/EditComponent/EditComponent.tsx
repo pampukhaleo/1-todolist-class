@@ -4,13 +4,12 @@ import { Button } from '../Button/Button';
 
 type PropsType = {
   onClickEditHandler: (title: string) => void
-  editValue: string
+  initialValue: string
   closeInput: () => void
-
 }
 
-export const EditComponent = ({ closeInput, onClickEditHandler, editValue }: PropsType) => {
-  const [inputValue, setInputValue] = useState(editValue);
+export const EditComponent = ({ closeInput, onClickEditHandler, initialValue }: PropsType) => {
+  const [inputValue, setInputValue] = useState(initialValue);
   const [error, setError] = useState<string | null>(null);
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -32,12 +31,13 @@ export const EditComponent = ({ closeInput, onClickEditHandler, editValue }: Pro
   return (
     <div className={ 'container' }>
       <input value={ inputValue }
-             onChange={ onChangeHandler }
              type="text"
-             onKeyDown={ onKeyDownPress }/>
-      { error }
+             onChange={ onChangeHandler }
+             onKeyDown={ onKeyDownPress }
+             className={ error ? 'error' : '' }/>
       <Button name={ 'Edit' } callBack={ clickEditButtonHandler }/>
-      <Button name={ 'Close' } callBack={ () => closeInput() }/>
+      <Button name={ 'Close' } callBack={ closeInput }/>
+      { error && <div className="error-message">{ error }</div> }
     </div>
   )
 }

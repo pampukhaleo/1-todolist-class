@@ -16,14 +16,14 @@ type PropsType = {
   editTask: (title: string, todoListId: string) => void
   disabled: boolean
   disableHandler: (id: string, todoListId: string) => void
-  editInputValue: string
+  taskInputInitialValue: string
   closeEditInput: (todoListId: string) => void
   changeFilter: (value: FilterValuesType, todoListId: string) => void
   todoListId: string
   taskFilterStatus: string
   deleteTodoList: (todoListId: string) => void
   editTodoListTitle: (value: string, todoListId: string) => void
-  editTodoListTistleValue: string
+  todoListInitialValue: string
 }
 
 const TodoList = ({
@@ -35,46 +35,42 @@ const TodoList = ({
                     editTask,
                     disabled,
                     disableHandler,
-                    editInputValue,
+                    taskInputInitialValue,
                     closeEditInput,
                     changeFilter,
                     todoListId,
                     taskFilterStatus,
                     deleteTodoList,
                     editTodoListTitle,
-                    editTodoListTistleValue
+                    todoListInitialValue
                   }: PropsType) => {
 
   const [showTitleInput, setShowTitleInput] = useState(false);
 
-  const filterHandler = (value: FilterValuesType) => changeFilter(value, todoListId)
-
+  //task
   const deleteTaskHandler = (id: string) => {
     removeTask(id, todoListId)
   }
-
   const addTask = (text: string) => {
     createTask(text, todoListId)
   }
-
   const onClickEditTaskHandler = (title: string) => {
     editTask(title, todoListId)
   }
-
   const onChangeStatusTaskHandler = (event: ChangeEvent<HTMLInputElement>, id: string) => {
     const isDone = event.currentTarget.checked
     changeStatus(id, isDone, todoListId)
   }
 
-  const onDeleteTodoListHandler = () => {
-    deleteTodoList(todoListId)
-  }
-
+  //todolist
   const onClickSetTodolistTitle = (value: string) => {
     editTodoListTitle(value, todoListId)
     setShowTitleInput(false)
   }
-
+  const onDeleteTodoListHandler = () => {
+    deleteTodoList(todoListId)
+  }
+  const filterHandler = (value: FilterValuesType) => changeFilter(value, todoListId)
   const closeTodoListTitleInput = () => {
     setShowTitleInput(false)
   }
@@ -85,7 +81,7 @@ const TodoList = ({
         showTitleInput
           ? <EditComponent closeInput={ closeTodoListTitleInput }
                            onClickEditHandler={ onClickSetTodolistTitle }
-                           editValue={ editTodoListTistleValue }/>
+                           initialValue={ todoListInitialValue }/>
           : <h2 onClick={ () => setShowTitleInput(true) }>{ header }
             <IconButton
               onClick={ onDeleteTodoListHandler }
@@ -129,7 +125,7 @@ const TodoList = ({
       </div>
       { !disabled && <EditComponent closeInput={ () => closeEditInput(todoListId) }
                                     onClickEditHandler={ onClickEditTaskHandler }
-                                    editValue={ editInputValue }/> }
+                                    initialValue={ taskInputInitialValue }/> }
     </div>
   )
 }

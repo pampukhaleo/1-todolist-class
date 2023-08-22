@@ -44,7 +44,6 @@ export const AddForm = ({ addTask, addFormName }: PropsType) => {
         value={ inputValue }
         className={ error ? 'error' : '' }
       />
-      {/*<Button name={ '+' } callBack={ inputEditValueHandler }/>*/ }
       <Button onClick={ inputEditValueHandler } variant="contained" endIcon={ <SendIcon/> }>
         Create
       </Button>
