@@ -193,7 +193,6 @@ function App() {
           return <TodoList
             key={ tl.id }
             todoListId={ tl.id }
-            header={ tl.name }
             taskFilterStatus={ tl.filter }
             disabled={ tl.disabled }
             todoListInitialValue={ tl.name }

@@ -8,7 +8,6 @@ import { FilterValuesType, Task } from '../../App';
 import { AddForm } from '../AddForm/AddForm';
 
 type PropsType = {
-  header: string
   tasks: () => Task[]
   removeTask: (id: string, todoListId: string) => void
   changeStatus: (id: string, isDone: boolean, todoListId: string) => void
@@ -27,7 +26,6 @@ type PropsType = {
 }
 
 const TodoList = ({
-                    header,
                     tasks,
                     createTask,
                     changeStatus,
@@ -71,18 +69,18 @@ const TodoList = ({
     deleteTodoList(todoListId)
   }
   const filterHandler = (value: FilterValuesType) => changeFilter(value, todoListId)
-  const closeTodoListTitleInput = () => {
-    setShowTitleInput(false)
+  const toggleTodoListTitleInput = () => {
+    setShowTitleInput(!showTitleInput)
   }
 
   return (
     <div>
       {
         showTitleInput
-          ? <EditComponent closeInput={ closeTodoListTitleInput }
+          ? <EditComponent closeInput={ toggleTodoListTitleInput }
                            onClickEditHandler={ onClickSetTodolistTitle }
                            initialValue={ todoListInitialValue }/>
-          : <h2 onClick={ () => setShowTitleInput(true) }>{ header }
+          : <h2 onClick={ toggleTodoListTitleInput }>{ todoListInitialValue }
             <IconButton
               onClick={ onDeleteTodoListHandler }
               aria-label="delete"
