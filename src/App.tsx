@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { v1 } from 'uuid';
 import './App.css';
 import TodoList from './components/TodoList/TodoList';
+import { AddForm } from './components/AddForm/AddForm';
 
 export type FilterValuesType = 'All' | 'Completed' | 'Active'
 
@@ -148,11 +149,11 @@ function App() {
     setTodoLists(newTodoListArr);
   }
 
-  const addTodoList = () => {
+  const addTodoList = (text: string) => {
     const newId = v1()
     const newTodoList: TodoListType = {
       id: newId,
-      name: 'New TodoList',
+      name: text,
       filter: 'All',
       disabled: true
     }
@@ -178,7 +179,7 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={ addTodoList }>create todoList</button>
+      <AddForm addTask={ addTodoList } addFormName={ 'Add Todo List' }/>
       {
         todoLists.map(tl => {
           const filterStatus = () => {
