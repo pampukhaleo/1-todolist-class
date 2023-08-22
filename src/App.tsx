@@ -203,6 +203,7 @@ function App() {
             header={ tl.name }
             taskFilterStatus={ tl.filter }
             disabled={ tl.disabled }
+            editTodoListTistleValue={ tl.name }
             editInputValue={ editInputValue }
             tasks={ filterStatus }
             removeTask={ removeTask }
@@ -217,7 +218,6 @@ function App() {
           />
         })
       }
-
     </div>
   );
 }

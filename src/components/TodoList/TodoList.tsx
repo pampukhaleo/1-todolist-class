@@ -23,6 +23,7 @@ type PropsType = {
   taskFilterStatus: string
   deleteTodoList: (todoListId: string) => void
   editTodoListTitle: (value: string, todoListId: string) => void
+  editTodoListTistleValue: string
 }
 
 const TodoList = ({
@@ -40,10 +41,10 @@ const TodoList = ({
                     todoListId,
                     taskFilterStatus,
                     deleteTodoList,
-                    editTodoListTitle
+                    editTodoListTitle,
+                    editTodoListTistleValue
                   }: PropsType) => {
 
-  const [todolistTitleValue, setTodolistTitleValue] = useState('');
   const [showTitleInput, setShowTitleInput] = useState(false);
 
   const filterHandler = (value: FilterValuesType) => changeFilter(value, todoListId)
@@ -69,12 +70,12 @@ const TodoList = ({
     deleteTodoList(todoListId)
   }
 
-  const onChangeTodolistTitleValue = (event: ChangeEvent<HTMLInputElement>) => {
-    setTodolistTitleValue(event.currentTarget.value)
+  const onClickSetTodolistTitle = (value: string) => {
+    editTodoListTitle(value, todoListId)
+    setShowTitleInput(false)
   }
 
-  const onBlurSetTodolistTitle = () => {
-    editTodoListTitle(todolistTitleValue, todoListId)
+  const closeTodoListTitleInput = () => {
     setShowTitleInput(false)
   }
 
@@ -82,11 +83,9 @@ const TodoList = ({
     <div>
       {
         showTitleInput
-          ? <h2>Change Title
-            <input type="text" value={ todolistTitleValue }
-                   onChange={ onChangeTodolistTitleValue }
-                   onBlur={ onBlurSetTodolistTitle }/>
-          </h2>
+          ? <EditComponent closeInput={ closeTodoListTitleInput }
+                           onClickEditHandler={ onClickSetTodolistTitle }
+                           editValue={ editTodoListTistleValue }/>
           : <h2 onClick={ () => setShowTitleInput(true) }>{ header }
             <IconButton
               onClick={ onDeleteTodoListHandler }
@@ -102,7 +101,9 @@ const TodoList = ({
         { tasks().map(task => (
           <li key={ task.id }
               className={ task.isDone ? 'grey-text' : '' }>
-            <input onChange={ (e) => onChangeStatusTaskHandler(e, task.id) } type="checkbox" checked={ task.isDone }/>
+            <input onChange={ (e) => onChangeStatusTaskHandler(e, task.id) }
+                   type="checkbox"
+                   checked={ task.isDone }/>
             <span>{ task.title }</span>
             <IconButton
               onClick={ () => deleteTaskHandler(task.id) }
@@ -126,7 +127,7 @@ const TodoList = ({
                 callBack={ () => filterHandler('Completed') }
                 name={ 'Completed' }/>
       </div>
-      { !disabled && <EditComponent closeEditInput={ () => closeEditInput(todoListId) }
+      { !disabled && <EditComponent closeInput={ () => closeEditInput(todoListId) }
                                     onClickEditHandler={ onClickEditTaskHandler }
                                     editValue={ editInputValue }/> }
     </div>

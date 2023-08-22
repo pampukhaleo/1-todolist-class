@@ -5,11 +5,11 @@ import { Button } from '../Button/Button';
 type PropsType = {
   onClickEditHandler: (title: string) => void
   editValue: string
-  closeEditInput: () => void
+  closeInput: () => void
 
 }
 
-export const EditComponent = ({ closeEditInput, onClickEditHandler, editValue }: PropsType) => {
+export const EditComponent = ({ closeInput, onClickEditHandler, editValue }: PropsType) => {
   const [inputValue, setInputValue] = useState(editValue);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,9 +35,9 @@ export const EditComponent = ({ closeEditInput, onClickEditHandler, editValue }:
              onChange={ onChangeHandler }
              type="text"
              onKeyDown={ onKeyDownPress }/>
-      { error && error }
+      { error }
       <Button name={ 'Edit' } callBack={ clickEditButtonHandler }/>
-      <Button name={ 'Close' } callBack={ () => closeEditInput() }/>
+      <Button name={ 'Close' } callBack={ () => closeInput() }/>
     </div>
   )
 }

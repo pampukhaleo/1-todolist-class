@@ -1,5 +1,6 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
-import { Button } from '../Button/Button';
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
 
 type PropsType = {
   addTask: (text: string) => void
@@ -43,7 +44,10 @@ export const AddForm = ({ addTask, addFormName }: PropsType) => {
         value={ inputValue }
         className={ error ? 'error' : '' }
       />
-      <Button name={ '+' } callBack={ inputEditValueHandler }/>
+      {/*<Button name={ '+' } callBack={ inputEditValueHandler }/>*/ }
+      <Button onClick={ inputEditValueHandler } variant="contained" endIcon={ <SendIcon/> }>
+        Create
+      </Button>
       { error && <div className="error-message">{ error }</div> }
     </div>
   )
