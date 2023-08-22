@@ -68,7 +68,23 @@ function App() {
     setTasksObj({ ...tasksObj })
   }
 
-  const changeStatus = (id: string, isDone: boolean, todoListId: string) => {
+  const editTask = (title: string, todoListId: string) => {
+    const tasks = tasksObj[todoListId]
+
+    tasksObj[todoListId] = tasks.map(task => {
+      if (task.id === editId) {
+        return {
+          ...task,
+          title: title
+        }
+      }
+      return task
+    })
+    setTasksObj({ ...tasksObj })
+    closeEditInput(todoListId)
+  }
+
+  const changeTaskStatus = (id: string, isDone: boolean, todoListId: string) => {
     const tasks = tasksObj[todoListId]
 
     // const newStatus = tasks.map(task => id === task.id ? {...task, isDone: !task.isDone  }: task)
@@ -85,13 +101,13 @@ function App() {
     setTasksObj({ ...tasksObj })
   }
 
-  const disableHandler = (id: string, todoListId: string) => {
-    disablingInput(todoListId)
+  const disableEditInputHandler = (id: string, todoListId: string) => {
+    closeEditInput(todoListId)
     inputEditInitialValue(id, todoListId);
     setEditId(id)
   }
 
-  const disablingInput = (todoListId: string) => {
+  const closeEditInput = (todoListId: string) => {
     const newTodoList = todoLists.map(tl => {
       if (tl.id === todoListId) {
         return {
@@ -113,33 +129,7 @@ function App() {
     setEditInputValue(filteredTask[0].title)
   }
 
-  const editTask = (title: string, todoListId: string) => {
-    const tasks = tasksObj[todoListId]
-
-    tasksObj[todoListId] = tasks.map(task => {
-      if (task.id === editId) {
-        return {
-          ...task,
-          title: title
-        }
-      }
-      return task
-    })
-    setTasksObj({ ...tasksObj })
-
-    const newTodoList = todoLists.map(tl => {
-      if (tl.id === todoListId) {
-        return {
-          ...tl,
-          disabled: !tl.disabled
-        }
-      }
-      return tl
-    })
-    setTodoLists(newTodoList)
-  }
-
-  const changeFilter = (value: FilterValuesType, todoListId: string) => {
+  const changeTodolistFilter = (value: FilterValuesType, todoListId: string) => {
     const newTodoLists = todoLists.map(tl => {
       if (tl.id === todoListId) {
         return {
@@ -170,12 +160,25 @@ function App() {
       [newId]: [{ id: v1(), title: 'New Task', isDone: false }]
     }
     setTodoLists([...todoLists, newTodoList])
-    setTasksObj({...tasksObj, ...newTask})
+    setTasksObj({ ...tasksObj, ...newTask })
+  }
+
+  const editTodoListTitle = (value: string, todoListId: string) => {
+    const newTodoLists = todoLists.map(tl => {
+      if (tl.id === todoListId) {
+        return {
+          ...tl,
+          name: value
+        }
+      }
+      return tl
+    })
+    setTodoLists(newTodoLists)
   }
 
   return (
     <div className="App">
-      <button onClick={addTodoList}>create</button>
+      <button onClick={ addTodoList }>create todoList</button>
       {
         todoLists.map(tl => {
           const filterStatus = () => {
@@ -204,11 +207,12 @@ function App() {
             removeTask={ removeTask }
             createTask={ createTask }
             editTask={ editTask }
-            changeStatus={ changeStatus }
-            changeFilter={ changeFilter }
-            disableHandler={ disableHandler }
-            disablingInput={ disablingInput }
+            changeStatus={ changeTaskStatus }
+            changeFilter={ changeTodolistFilter }
+            disableHandler={ disableEditInputHandler }
+            closeEditInput={ closeEditInput }
             deleteTodoList={ deleteTodoList }
+            editTodoListTitle={ editTodoListTitle }
           />
         })
       }

@@ -16,11 +16,12 @@ type PropsType = {
   disabled: boolean
   disableHandler: (id: string, todoListId: string) => void
   editInputValue: string
-  disablingInput: (todoListId: string) => void
+  closeEditInput: (todoListId: string) => void
   changeFilter: (value: FilterValuesType, todoListId: string) => void
   todoListId: string
   taskFilterStatus: string
   deleteTodoList: (todoListId: string) => void
+  editTodoListTitle: (value: string, todoListId: string) => void
 }
 
 const TodoList = ({
@@ -33,14 +34,17 @@ const TodoList = ({
                     disabled,
                     disableHandler,
                     editInputValue,
-                    disablingInput,
+                    closeEditInput,
                     changeFilter,
                     todoListId,
                     taskFilterStatus,
-                    deleteTodoList
+                    deleteTodoList,
+                    editTodoListTitle
                   }: PropsType) => {
 
   const [inputValue, setInputValue] = useState('')
+  const [todolistTitleValue, setTodolistTitleValue] = useState('');
+  const [showTitleInput, setShowTitleInput] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const filterHandler = (value: FilterValuesType) => changeFilter(value, todoListId)
@@ -49,7 +53,7 @@ const TodoList = ({
     setInputValue(event.currentTarget.value)
   }
 
-  const deleteHandler = (id: string) => {
+  const deleteTaskHandler = (id: string) => {
     removeTask(id, todoListId)
   }
 
@@ -63,22 +67,22 @@ const TodoList = ({
     setInputValue('')
   }
 
-  const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDownCreateInputHandler = (event: KeyboardEvent<HTMLInputElement>) => {
     setError(null)
     if (event.key === 'Enter') {
       addTaskHandler()
     }
   }
 
-  const inputValueHandler = () => {
+  const inputEditValueHandler = () => {
     addTaskHandler()
   }
 
-  const onClickEditHandler = (title: string) => {
+  const onClickEditTaskHandler = (title: string) => {
     editTask(title, todoListId)
   }
 
-  const onChangeHandler = (event: ChangeEvent<HTMLInputElement>, id: string) => {
+  const onChangeStatusTaskHandler = (event: ChangeEvent<HTMLInputElement>, id: string) => {
     const isDone = event.currentTarget.checked
     changeStatus(id, isDone, todoListId)
   }
@@ -87,28 +91,45 @@ const TodoList = ({
     deleteTodoList(todoListId)
   }
 
+  const onChangeTodolistTitleValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setTodolistTitleValue(event.currentTarget.value)
+  }
+
+  const onBlurSetTodolistTitle = () => {
+    editTodoListTitle(todolistTitleValue, todoListId)
+    setShowTitleInput(false)
+  }
+
   return (
     <div>
-      <h3>{ header }</h3>
-      <button onClick={onDeleteTodoListHandler}>X</button>
+      {
+        showTitleInput
+          ? <div>
+            <input type="text" value={ todolistTitleValue }
+                   onChange={ onChangeTodolistTitleValue }
+                   onBlur={ onBlurSetTodolistTitle }/>
+          </div>
+          : <h3 onClick={ () => setShowTitleInput(true) }>{ header }</h3>
+      }
+      <button onClick={ onDeleteTodoListHandler }>X</button>
       <div>
         <input
           onChange={ onChangeInputHandler }
-          onKeyDown={ onKeyDownHandler }
+          onKeyDown={ onKeyDownCreateInputHandler }
           value={ inputValue }
           className={ error ? 'error' : '' }
         />
-        <Button name={ '+' } callBack={ inputValueHandler }/>
+        <Button name={ '+' } callBack={ inputEditValueHandler }/>
         { error && <div className="error-message">{ error }</div> }
       </div>
       <ul>
         { tasks().map(task => (
           <li key={ task.id }
               className={ task.isDone ? 'grey-text' : '' }>
-            <input onChange={ (e) => onChangeHandler(e, task.id) } type="checkbox" checked={ task.isDone }/>
+            <input onChange={ (e) => onChangeStatusTaskHandler(e, task.id) } type="checkbox" checked={ task.isDone }/>
             <span>{ task.title }</span>
             <IconButton
-              onClick={ () => deleteHandler(task.id) }
+              onClick={ () => deleteTaskHandler(task.id) }
               aria-label="delete"
               size="large"
             >
@@ -129,8 +150,8 @@ const TodoList = ({
                 callBack={ () => filterHandler('Completed') }
                 name={ 'Completed' }/>
       </div>
-      { !disabled && <EditComponent disablingInput={ () => disablingInput(todoListId) }
-                                    onClickEditHandler={ onClickEditHandler }
+      { !disabled && <EditComponent closeEditInput={ () => closeEditInput(todoListId) }
+                                    onClickEditHandler={ onClickEditTaskHandler }
                                     editValue={ editInputValue }/> }
     </div>
   )
