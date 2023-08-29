@@ -1,14 +1,14 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
+import { TextField } from '@mui/material';
 
 type PropsType = {
   addTask: (text: string) => void
-  addFormName: string
 }
-export const AddForm = ({ addTask, addFormName }: PropsType) => {
+export const AddForm = ({ addTask }: PropsType) => {
   const [inputValue, setInputValue] = useState('')
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<boolean>(false);
 
   const onChangeInputHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.currentTarget.value)
@@ -19,7 +19,7 @@ export const AddForm = ({ addTask, addFormName }: PropsType) => {
   }
 
   const onKeyDownCreateInputHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-    setError(null)
+    setError(false)
     if (event.key === 'Enter') {
       addTaskHandler()
     }
@@ -27,7 +27,7 @@ export const AddForm = ({ addTask, addFormName }: PropsType) => {
 
   const addTaskHandler = () => {
     if (inputValue.trim() === '') {
-      setError('Field is required')
+      setError(true)
       setInputValue('')
       return
     }
@@ -36,18 +36,19 @@ export const AddForm = ({ addTask, addFormName }: PropsType) => {
   }
 
   return (
-    <div>
-      <h4>{ addFormName }</h4>
-      <input
+    <>
+      <TextField
+        sx={ { mr: '5px'} }
+        size="small"
         onChange={ onChangeInputHandler }
         onKeyDown={ onKeyDownCreateInputHandler }
         value={ inputValue }
-        className={ error ? 'error' : '' }
+        error={ error }
+        helperText={ error ? 'Text required' : '' }
       />
       <Button onClick={ inputEditValueHandler } variant="contained" endIcon={ <SendIcon/> }>
         Create
       </Button>
-      { error && <div className="error-message">{ error }</div> }
-    </div>
+    </>
   )
 }

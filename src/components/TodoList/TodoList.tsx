@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useState } from 'react'
-import { IconButton } from '@mui/material';
+import { Button, IconButton, List, ListItem, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from '../Button/Button';
 import ButtonMUI from '@mui/material/Button';
 import { EditComponent } from '../EditComponent/EditComponent';
 import { FilterValuesType, Task } from '../../App';
 import { AddForm } from '../AddForm/AddForm';
+import { Checkbox } from '@mui/material';
 
 type PropsType = {
   tasks: () => Task[]
@@ -55,10 +55,6 @@ const TodoList = ({
   const onClickEditTaskHandler = (title: string) => {
     editTask(title, todoListId)
   }
-  const onChangeStatusTaskHandler = (event: ChangeEvent<HTMLInputElement>, id: string) => {
-    const isDone = event.currentTarget.checked
-    changeStatus(id, isDone, todoListId)
-  }
 
   //todolist
   const onClickSetTodolistTitle = (value: string) => {
@@ -80,7 +76,11 @@ const TodoList = ({
           ? <EditComponent closeInput={ toggleTodoListTitleInput }
                            onClickEditHandler={ onClickSetTodolistTitle }
                            initialValue={ todoListInitialValue }/>
-          : <h2 onClick={ toggleTodoListTitleInput }>{ todoListInitialValue }
+          : <Typography variant='h5'
+                        align='center'
+                        gutterBottom
+                        sx={{fontWeight: 'bold'}}
+                        onClick={ toggleTodoListTitleInput }>{ todoListInitialValue }
             <IconButton
               onClick={ onDeleteTodoListHandler }
               aria-label="delete"
@@ -88,16 +88,23 @@ const TodoList = ({
             >
               <DeleteIcon/>
             </IconButton>
-          </h2>
+          </Typography>
       }
-      <AddForm addTask={ addTask } addFormName={ 'Add Task' }/>
-      <ul>
-        { tasks().map(task => (
-          <li key={ task.id }
-              className={ task.isDone ? 'grey-text' : '' }>
-            <input onChange={ (e) => onChangeStatusTaskHandler(e, task.id) }
-                   type="checkbox"
-                   checked={ task.isDone }/>
+      <AddForm addTask={ addTask } />
+      <List>
+        { tasks().map(task => {
+          const onChangeStatusTaskHandler = (event: ChangeEvent<HTMLInputElement>) => {
+            const isDone = event.currentTarget.checked
+            changeStatus(task.id, isDone, todoListId)
+          }
+
+          return <ListItem key={ task.id }
+                           sx={{display: 'flex', justifyContent: 'space-evenly'}}
+                           disablePadding
+                           divider
+                           className={ task.isDone ? 'grey-text' : '' }>
+            <Checkbox onChange={ onChangeStatusTaskHandler }
+                      checked={ task.isDone }/>
             <span>{ task.title }</span>
             <IconButton
               onClick={ () => deleteTaskHandler(task.id) }
@@ -107,19 +114,34 @@ const TodoList = ({
               <DeleteIcon/>
             </IconButton>
             <ButtonMUI onClick={ () => disableHandler(task.id, todoListId) }>Edit Task</ButtonMUI>
-          </li>
-        )) }
-      </ul>
-      <div>
-        <Button status={ taskFilterStatus === 'All' }
-                callBack={ () => filterHandler('All') }
-                name={ 'All' }/>
-        <Button status={ taskFilterStatus === 'Active' }
-                callBack={ () => filterHandler('Active') }
-                name={ 'Active' }/>
-        <Button status={ taskFilterStatus === 'Completed' }
-                callBack={ () => filterHandler('Completed') }
-                name={ 'Completed' }/>
+          </ListItem>
+
+        }) }
+      </List>
+      <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+        <Button variant="contained"
+                color={ taskFilterStatus === 'All' ? 'secondary' : 'primary' }
+                size="medium"
+                disableElevation
+                onClick={ () => filterHandler('All') }
+                sx={ { mr: '2px' } }>
+          All
+        </Button>
+        <Button variant="contained"
+                color={ taskFilterStatus === 'Active' ? 'secondary' : 'primary' }
+                size="medium"
+                disableElevation
+                onClick={ () => filterHandler('Active') }
+                sx={ { mr: '2px' } }>
+          Active
+        </Button>
+        <Button variant="contained"
+                color={ taskFilterStatus === 'Completed' ? 'secondary' : 'primary' }
+                size="medium"
+                disableElevation
+                onClick={ () => filterHandler('Completed') }>
+          Completed
+        </Button>
       </div>
       { !disabled && <EditComponent closeInput={ () => closeEditInput(todoListId) }
                                     onClickEditHandler={ onClickEditTaskHandler }
