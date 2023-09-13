@@ -1,3 +1,4 @@
+import { v1 } from 'uuid'
 import { FilterValuesType, TodoListType } from '../App'
 
 export type RemoveTodoListAT = {
@@ -67,10 +68,10 @@ export const RemoveTodoListAC = (todoListId: string): RemoveTodoListAT => ({
   todoListId
 })
 
-export const AddTodoListAC = (newTitle: string, todoListId: string): AddTodoListAT => ({
+export const AddTodoListAC = (newTitle: string): AddTodoListAT => ({
   type: 'ADD-TODOLIST',
   newTitle,
-  todoListId
+  todoListId: v1()
 })
 
 export const ChangeTodoListTitleAC = (value: string, todoListId: string): ChangeTodoListTitleAT => ({

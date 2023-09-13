@@ -33,7 +33,7 @@ export type TodoListType = {
   disabled: boolean
 }
 
-type TasksType = {
+export type TasksType = {
   [key: string]: Task[]
 }
 
@@ -82,6 +82,7 @@ function App() {
 
     setTasksObj({ ...tasksObj })
   }
+
   const editTask = (title: string, todoListId: string) => {
     const tasks = tasksObj[todoListId]
 
@@ -209,7 +210,7 @@ function App() {
               Todo Lists
             </Typography>
             <Box>
-              <Button color="inherit" variant="outlined" sx={{mr: '15px'}}>
+              <Button color="inherit" variant="outlined" sx={ { mr: '15px' } }>
                 Log Out
               </Button>
               <Button color="inherit"
