@@ -1,4 +1,3 @@
-import { v1 } from 'uuid'
 import { FilterValuesType, TodoListType } from '../App'
 
 export type RemoveTodoListAT = {
@@ -24,7 +23,16 @@ export type ChangeTodoListFilterAT = {
   todoListId: string
 }
 
-type ActionTypes = AddTodoListAT | RemoveTodoListAT | ChangeTodoListTitleAT | ChangeTodoListFilterAT
+export type CloseEditInputAT = {
+  type: 'CLOSE-TODOLIST-INPUT',
+  todoListId: string
+}
+
+type ActionTypes = AddTodoListAT |
+  RemoveTodoListAT |
+  ChangeTodoListTitleAT |
+  ChangeTodoListFilterAT |
+  CloseEditInputAT
 
 export const todoListsReducer = (todoLists: Array<TodoListType>, action: ActionTypes): Array<TodoListType> => {
   switch (action.type) {
@@ -58,6 +66,16 @@ export const todoListsReducer = (todoLists: Array<TodoListType>, action: ActionT
         }
         return tl
       })
+    case 'CLOSE-TODOLIST-INPUT':
+      return todoLists.map(tl => {
+        if (tl.id === action.todoListId) {
+          return {
+            ...tl,
+            disabled: !tl.disabled
+          }
+        }
+        return tl
+      })
     default:
       return todoLists
   }
@@ -68,10 +86,10 @@ export const RemoveTodoListAC = (todoListId: string): RemoveTodoListAT => ({
   todoListId
 })
 
-export const AddTodoListAC = (newTitle: string): AddTodoListAT => ({
+export const AddTodoListAC = (newTitle: string, todoListId: string): AddTodoListAT => ({
   type: 'ADD-TODOLIST',
   newTitle,
-  todoListId: v1()
+  todoListId
 })
 
 export const ChangeTodoListTitleAC = (value: string, todoListId: string): ChangeTodoListTitleAT => ({
@@ -85,3 +103,9 @@ export const ChangeTodoListFilterAC = (value: FilterValuesType, todoListId: stri
   value,
   todoListId
 })
+
+export const CloseTodoListInputAC = (todoListId: string): CloseEditInputAT => ({
+  type: 'CLOSE-TODOLIST-INPUT',
+  todoListId
+})
+
